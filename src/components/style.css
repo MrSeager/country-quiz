@@ -1,0 +1,44 @@
+.cs-transition {
+    transition: .5s !important;
+}
+
+.cs-mw {
+    max-width: 60rem !important;
+}
+
+.cs-mw-win {
+    max-width: 30rem !important;
+}
+
+/*Background*/
+.cs-bg-img {
+    background: url('../resources/bg.jpg') no-repeat center center !important;
+    background-size: cover !important;
+}
+
+.cs-bg-main {
+    background-color: #343964 !important;
+}
+
+.cs-bg-step {
+    background: linear-gradient(#393F6E, #393F6E) !important;
+}
+
+.cs-bg-step-pass {
+    background: linear-gradient(#E65895, #BC6BE8) !important;
+}
+
+/*Badge*/
+.step-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/*Font*/
+.cs-fc-main {
+    color: #E2E4F3 !important;
+}
+
+/*Buttons*/
+
+

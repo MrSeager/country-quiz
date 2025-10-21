@@ -32,7 +32,7 @@ export default function CountryQuizPage() {
             setAnsweredQuest={setAnsweredQuest}
             currQuest={currQuest}
             setCurrQuest={setCurrQuest}
-            setRightAnswers={setCurrQuest}
+            setRightAnswers={setRightAnswers}
             setEndQuiz={setEndQuiz}
           />
         </Container>

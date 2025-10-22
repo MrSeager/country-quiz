@@ -3,30 +3,33 @@ import { useState, useEffect } from 'react';
 //Components
 import Image from 'next/image';
 import { QuestionProps } from '@/types/types';
-import { generateQuestions } from '@/lib/generateQuestions';
 import QuestionText from './QuestionText';
+import QuizSectionPlaceholder from './QuizSectionPlaceholder';
 //Bootstrap
-import { Container, ButtonGroup, Button, Row, Col, Placeholder } from 'react-bootstrap';
+import { Container, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
 //Spring
 import { useSpring, animated } from '@react-spring/web';
 
 type QuizSectionProps = {
+    questions: Record<number, QuestionProps>;
+    loading: boolean;
+    selectedAnswer: number | null;
+    setSelectedAnswer: (selectedAnswer: number | null) => void;
+    answers: Record<number, number>;
+    setAnswers: React.Dispatch<React.SetStateAction<Record<number, number>>>;
     answeredQuest: number;
     setAnsweredQuest: React.Dispatch<React.SetStateAction<number>>;
     currQuest: number;
     setCurrQuest: React.Dispatch<React.SetStateAction<number>>;
     setRightAnswers: React.Dispatch<React.SetStateAction<number>>;
-    setEndQuiz: (endQuiz: boolean) => void;
 }
 
-export default function QuizSection({answeredQuest, setAnsweredQuest, currQuest, setCurrQuest, setRightAnswers}: QuizSectionProps) {
+export default function QuizSection({questions, loading, selectedAnswer, setSelectedAnswer, answers, setAnswers, answeredQuest, setAnsweredQuest, currQuest, setCurrQuest, setRightAnswers}: QuizSectionProps) {
     const steps = Array.from({ length: 10 }, (_, i) => i + 1);
-    const [questions, setQuestions] = useState<Record<number, QuestionProps>>({});
-    const [loading, setLoading] = useState<boolean>(true);
 
-    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
-    useEffect(() => {
+
+    /*useEffect(() => {
         async function loadQuestions() {
             const newQuestions: Record<number, QuestionProps> = {};
 
@@ -40,7 +43,7 @@ export default function QuizSection({answeredQuest, setAnsweredQuest, currQuest,
         }
 
         loadQuestions();
-    }, []);
+    }, []);*/
 
     const handleAnswer = (index: number) => {
         if (selectedAnswer !== null) return; // prevent multiple clicks
@@ -52,6 +55,8 @@ export default function QuizSection({answeredQuest, setAnsweredQuest, currQuest,
             setRightAnswers((prev) => prev + 1);
         }
 
+        setAnswers((prev) => ({ ...prev, [currQuest]: index }));
+
         setTimeout(() => {
             setSelectedAnswer(null);
             setCurrQuest((prev) => prev + 1);
@@ -61,54 +66,60 @@ export default function QuizSection({answeredQuest, setAnsweredQuest, currQuest,
 
     return(
         <Container className="rounded-4 py-5 cs-bg-main d-flex flex-column align-items-center justify-content-center gap-3">
-            <ButtonGroup className="justify-content-center gap-2">
+            <ButtonGroup className="justify-content-around gap-2 flex-wrap">
                 {steps.map((step) => (
                     <Button
                         key={step}
-                        disabled={currQuest < step}
+                        disabled={answeredQuest + 1 < step}
                         onClick={() => setCurrQuest(step)}
-                        className={`border-0 cs-transition rounded-circle m-0 d-flex align-items-center justify-content-center fs-4 step-badge cs-bg-step${answeredQuest >= step ? '-pass' : ''}`}
+                        className={`border-0 cs-transition rounded-circle m-0 d-flex align-items-center justify-content-center fs-4 step-btn cs-bg-step${answeredQuest >= step ? '-pass' : ''}`}
                     >
                         {step}
                     </Button>
                 ))}
             </ButtonGroup>
             {loading ? (
-                <>
-                    <Placeholder 
-                        as={'h1'} 
-                        xs={8} 
-                        className='rounded rounded-3' 
-                    />
-                    <Row>
-                        {[...Array(4)].map((_, index) => (
-                            <Col key={index} lg={6} xs={12} className="py-2">
-                                <Placeholder.Button
-                                    variant="light"
-                                    xs={12}
-                                    className="py-2 px-5 rounded-3 w-100"
-                                />
-                            </Col>
-                        ))}
-                    </Row>
-                </>
+                <QuizSectionPlaceholder />
                 ) : questions[currQuest] && (
                 <>
                     <QuestionText
                         question={questions[currQuest].question}
                         flagUrl={questions[currQuest].flagUrl}
                     />
-                    <Row>
+                    <Row className='w-75'>
                         {questions[currQuest].choices.map((choice, index) => (
                             <Col key={index} lg={6} xs={12} className="py-2">
-                            <Button
-                                onClick={() => handleAnswer(index)}
-                                disabled={selectedAnswer !== null}
-                                value={index + 1}
-                                className="cs-btn cs-bg-step border-0 py-2 cs-transition rounded-3 w-100"
-                            >
-                                {choice}
-                            </Button>
+                                <Button
+                                    onClick={() => handleAnswer(index)}
+                                    disabled={selectedAnswer !== null || answers[currQuest] !== undefined}
+                                    value={index + 1}
+                                    className="cs-btn cs-bg-step border-0 px-4 cs-transition rounded-3 w-100"
+                                >
+                                    {choice}
+                                    {/* ✅ Show check icon if this is the correct answer and question was answered */}
+                                    {answers[currQuest] !== undefined && index + 1 === questions[currQuest].option && (
+                                        <Image
+                                            src="/images/Check_round_fill.svg"
+                                            alt="Correct"
+                                            width={20}
+                                            height={20}
+                                            className="ms-2"
+                                        />
+                                    )}
+
+                                    {/* ❌ Show close icon if this was the selected wrong answer */}
+                                    {answers[currQuest] !== undefined &&
+                                        answers[currQuest] === index &&
+                                        index + 1 !== questions[currQuest].option && (
+                                        <Image
+                                            src="/images/Close_round_fill.svg"
+                                            alt="Wrong"
+                                            width={20}
+                                            height={20}
+                                            className="ms-2"
+                                        />
+                                    )}
+                                </Button>
                             </Col>
                         ))}
                     </Row>

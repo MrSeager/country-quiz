@@ -28,17 +28,19 @@
     background: linear-gradient(#E65895, #BC6BE8) !important;
 }
 
-/*Badge*/
-.step-badge {
-  width: 2.5rem;
-  height: 2.5rem;
-}
-
 /*Font*/
 .cs-fc-main {
     color: #E2E4F3 !important;
 }
 
 /*Buttons*/
+.step-btn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  max-width: 2.5rem !important;
+  max-height: 2.5rem !important;
+}
 
-
+.cs-btn {
+    height: 3rem !important;
+}

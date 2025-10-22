@@ -9,7 +9,7 @@ export default function QuestionText({ question, flagUrl }: QuestionTextProps) {
     if (flagUrl && question.includes("{flag}")) {
         const parts = question.split("{flag}");
         return (
-            <h2>
+            <h2 className="text-center">
                 {parts[0]}
                 <Image
                     src={flagUrl}

@@ -23,5 +23,5 @@ export default function QuestionText({ question, flagUrl }: QuestionTextProps) {
         );
     }
 
-    return <h2>{question}</h2>
+    return <h2 className="text-center">{question}</h2>
 }

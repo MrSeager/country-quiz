@@ -41,6 +41,23 @@
   max-height: 2.5rem !important;
 }
 
+.step-btn:hover {
+    scale: 1.05 !important;
+}
+
 .cs-btn {
     height: 3rem !important;
+}
+
+.cs-btn-checked {
+    background: linear-gradient(#E65895, #BC6BE8) !important;
+    height: 3rem !important;
+}
+
+.cs-btn:disabled, .cs-btn-checked:disabled {
+    opacity: 1 !important;
+}
+
+.cs-btn:hover {
+    scale: 1.05 !important;
 }

@@ -1,9 +1,10 @@
 //Components
 import Image from "next/image";
+import { useSlide } from "./anim";
 //Bootstrap
 import { Container, Button } from 'react-bootstrap';
 //Spring
-import { useSpring, animated } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 
 type CongratsSectionProps = {
   rightAnswers: number;
@@ -11,12 +12,14 @@ type CongratsSectionProps = {
 };
 
 export default function CongratsSection({rightAnswers, resetQuiz}: CongratsSectionProps){
+    const slideAnim = useSlide (-200, 50);
+    
     return(
-        <Container className="cs-mw-win rounded-4 py-4 text-center px-0 cs-bg-main d-flex flex-column align-items-center justify-content-center gap-3">
+        <animated.div style={slideAnim} className="container cs-mw-win rounded-4 py-4 text-center px-0 cs-bg-main d-flex flex-column align-items-center justify-content-center gap-3">
             <Image src={'/images/congrats.png'} alt="Win" width={349} height={107} />
             <h3 className="mx-5">Congrats! You completed the quiz.</h3>
             <p>You answer {rightAnswers}/10 correctly</p>
             <Button onClick={resetQuiz} className="cs-btn cs-bg-step border-0 py-2 cs-transition rounded-3 px-5 rounded-3">Play again</Button>
-        </Container>
+        </animated.div>
     );
 }

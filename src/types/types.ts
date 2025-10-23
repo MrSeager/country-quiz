@@ -5,10 +5,17 @@ export type CountryProps = {
   };
   cca2: string;
   capital: string;
+  region: string;
+  currencies: {
+    [currencyCode: string]: {
+      name: string;
+      symbol?: string;
+    };
+  }
 };
 
 export type QuestionProps = {
-  type: "flag" | "capital";
+  type: string;
   question: string;
   flagUrl?: string;
   option: number;

@@ -1,14 +1,13 @@
-"use client";
-import { useState, useEffect } from 'react';
 //Components
 import Image from 'next/image';
 import { QuestionProps } from '@/types/types';
 import QuestionText from './QuestionText';
 import QuizSectionPlaceholder from './QuizSectionPlaceholder';
+import { useSlide } from './anim';
 //Bootstrap
-import { Container, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
+import { ButtonGroup, Button, Row, Col } from 'react-bootstrap';
 //Spring
-import { useSpring, animated } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 
 type QuizSectionProps = {
     questions: Record<number, QuestionProps>;
@@ -26,24 +25,6 @@ type QuizSectionProps = {
 
 export default function QuizSection({questions, loading, selectedAnswer, setSelectedAnswer, answers, setAnswers, answeredQuest, setAnsweredQuest, currQuest, setCurrQuest, setRightAnswers}: QuizSectionProps) {
     const steps = Array.from({ length: 10 }, (_, i) => i + 1);
-
-
-
-    /*useEffect(() => {
-        async function loadQuestions() {
-            const newQuestions: Record<number, QuestionProps> = {};
-
-            for (let i = 1; i <= 10; i++) {
-                const q = await generateQuestions();
-                newQuestions[i] = q;
-            }
-
-            setQuestions(newQuestions);
-            setLoading(false);
-        }
-
-        loadQuestions();
-    }, []);*/
 
     const handleAnswer = (index: number) => {
         if (selectedAnswer !== null) return; // prevent multiple clicks
@@ -64,15 +45,17 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
         }, 1000); // 1 second delay
     };
 
+    const slideAnim = useSlide(200, 100);
+
     return(
-        <Container className="rounded-4 py-5 cs-bg-main d-flex flex-column align-items-center justify-content-center gap-3">
+        <animated.div style={slideAnim} className="container rounded-4 py-5 cs-bg-main d-flex flex-column align-items-center justify-content-center gap-3">
             <ButtonGroup className="justify-content-around gap-2 flex-wrap">
                 {steps.map((step) => (
                     <Button
                         key={step}
                         disabled={answeredQuest + 1 < step}
                         onClick={() => setCurrQuest(step)}
-                        className={`border-0 cs-transition rounded-circle m-0 d-flex align-items-center justify-content-center fs-4 step-btn cs-bg-step${answeredQuest >= step ? '-pass' : ''}`}
+                        className={`border-0 cs-transition rounded-circle m-0 d-flex align-items-center justify-content-center fs-4 step-btn cs-transition cs-bg-step${answeredQuest >= step ? '-pass' : ''}`}
                     >
                         {step}
                     </Button>
@@ -93,7 +76,7 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
                                     onClick={() => handleAnswer(index)}
                                     disabled={selectedAnswer !== null || answers[currQuest] !== undefined}
                                     value={index + 1}
-                                    className="cs-btn cs-bg-step border-0 px-4 cs-transition rounded-3 w-100"
+                                    className={`cs-btn${answers[currQuest] === index  ? '-checked' : ''} cs-transition text-nowrap cs-bg-step border-0 px-4 cs-transition rounded-3 w-100`}
                                 >
                                     {choice}
                                     {/* ✅ Show check icon if this is the correct answer and question was answered */}
@@ -108,9 +91,7 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
                                     )}
 
                                     {/* ❌ Show close icon if this was the selected wrong answer */}
-                                    {answers[currQuest] !== undefined &&
-                                        answers[currQuest] === index &&
-                                        index + 1 !== questions[currQuest].option && (
+                                    {answers[currQuest] !== undefined && answers[currQuest] === index && index + 1 !== questions[currQuest].option && (
                                         <Image
                                             src="/images/Close_round_fill.svg"
                                             alt="Wrong"
@@ -125,6 +106,6 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
                     </Row>
                 </>
             )}
-        </Container>
+        </animated.div>
     );
 }

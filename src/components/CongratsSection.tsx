@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useSlide } from "./anim";
 //Bootstrap
-import { Container, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 //Spring
 import { animated } from '@react-spring/web';
 

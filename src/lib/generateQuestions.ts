@@ -1,7 +1,7 @@
 import { CountryProps, QuestionProps } from "@/types/types";
 
 export async function generateQuestions(): Promise<QuestionProps> {
-  const generators = [generateFlagQuestion, generateCapitalQuestion, generateRegionQuestion];
+  const generators = [generateFlagQuestion, generateCapitalQuestion, generateCountryFromCapitalQuestion, generateRegionQuestion];
   const randomIndex = Math.floor(Math.random() * generators.length);
   return await generators[randomIndex]();
 }
@@ -50,16 +50,61 @@ export async function generateCapitalQuestion(): Promise<QuestionProps> {
   };
 }
 
+// Which country has the capital {capital}? - question
+export async function generateCountryFromCapitalQuestion(): Promise<QuestionProps> {
+  const res = await fetch('https://restcountries.com/v3.1/all?fields=name,capital');
+  const countries = await res.json();
+
+  const validCountries = countries.filter(
+    (c: CountryProps) => c.name?.common && Array.isArray(c.capital) && typeof c.capital[0] === "string"
+  );
+
+  // Ensure unique capital cities
+  const uniqueCapitalCountries: CountryProps[] = [];
+  const seenCapitals = new Set<string>();
+
+  for (const country of validCountries) {
+    const capital = country.capital[0];
+    if (!seenCapitals.has(capital)) {
+      uniqueCapitalCountries.push(country);
+      seenCapitals.add(capital);
+    }
+  }
+
+  const selected: CountryProps[] = getRandomUnique(uniqueCapitalCountries, 4);
+  const correctIndex = Math.floor(Math.random() * 4);
+  const correctCountry = selected[correctIndex];
+
+  return {
+    type: "country-from-capital",
+    question: `Which country has the capital ${correctCountry.capital[0]}?`,
+    flagUrl: undefined,
+    option: correctIndex + 1,
+    answer: correctCountry.name.common,
+    choices: selected.map((c: CountryProps) => c.name.common),
+  };
+}
+
 // Which region does {country} belong to?
 export async function generateRegionQuestion(): Promise<QuestionProps> {
   const res = await fetch('https://restcountries.com/v3.1/all?fields=name,region');
   const countries = await res.json();
 
+  const uniqueRegionCountries: CountryProps[] = [];
+  const seenRegions = new Set<string>();
+
   const validCountries = countries.filter(
     (c: CountryProps) => c.name?.common && typeof c.region === "string" && c.region.length > 0
   );
 
-  const selected: CountryProps[] = getRandomUnique(validCountries, 4);
+  for (const country of validCountries) {
+    if (!seenRegions.has(country.region)) {
+      uniqueRegionCountries.push(country);
+      seenRegions.add(country.region);
+    }
+  }
+
+  const selected: CountryProps[] = getRandomUnique(uniqueRegionCountries, 4);
   const correctIndex = Math.floor(Math.random() * 4);
   const correctCountry = selected[correctIndex];
 

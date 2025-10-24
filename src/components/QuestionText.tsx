@@ -5,7 +5,7 @@ type QuestionTextProps = {
     flagUrl?: string;
 }
 
-export default function QuestionText({ question, flagUrl }: QuestionTextProps) {
+export default function QuestionText({ question, flagUrl }: QuestionTextProps) {  
     if (flagUrl && question.includes("{flag}")) {
         const parts = question.split("{flag}");
         return (

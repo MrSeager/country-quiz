@@ -37,11 +37,11 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
         }
 
         setAnswers((prev) => ({ ...prev, [currQuest]: index }));
+        setAnsweredQuest((prev) => prev + 1);
 
         setTimeout(() => {
             setSelectedAnswer(null);
             setCurrQuest((prev) => prev + 1);
-            setAnsweredQuest((prev) => prev + 1);
         }, 1000); // 1 second delay
     };
 
@@ -69,7 +69,7 @@ export default function QuizSection({questions, loading, selectedAnswer, setSele
                         question={questions[currQuest].question}
                         flagUrl={questions[currQuest].flagUrl}
                     />
-                    <Row className='w-75'>
+                    <Row className='w-100 px-5'>
                         {questions[currQuest].choices.map((choice, index) => (
                             <Col key={index} lg={6} xs={12} className="py-2">
                                 <Button

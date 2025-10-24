@@ -24,10 +24,24 @@ export default function CountryQuizPage() {
 
   const loadQuestions = async () => {
     const newQuestions: Record<number, QuestionProps> = {};
-    for (let i = 1; i <= 10; i++) {
+    const usedCountries = new Set<string>();
+
+    let i = 1;
+    while (i <= 10) {
       const q = await generateQuestions();
-      newQuestions[i] = q;
+
+      // Normalize country name (from answer or question context)
+      const countryKey = q.type === "flag"
+        ? q.answer.toLowerCase()
+        : q.question.match(/of (.+?)\??$/)?.[1]?.toLowerCase() || q.answer.toLowerCase();
+
+      if (!usedCountries.has(countryKey)) {
+        usedCountries.add(countryKey);
+        newQuestions[i] = q;
+        i++;
+      }
     }
+
     setQuestions(newQuestions);
     setLoading(false);
   };
@@ -50,13 +64,13 @@ export default function CountryQuizPage() {
   const slideAnim = useSlide(-200, 50);
 
   return (
-    <Container fluid className='overflow-hidden py-5 cs-fc-main cs-bg-img min-vh-100 d-flex flex-column align-items-center justify-content-center gap-3'>
-      {answeredQuest < 10 ?
+    <Container fluid className='user-select-none overflow-hidden py-5 cs-fc-main cs-bg-img min-vh-100 d-flex flex-column align-items-center justify-content-center gap-3'>
+      {currQuest < 11 ?
         <animated.div style={slideAnim} className="container px-0 cs-mw d-flex flex-column align-items-center justify-content-center gap-3">
           <Container className="d-flex px-0 align-items-center justify-content-between">
             <h1>Country Quiz</h1>
-            <Badge pill className="cs-fc-main cs-bg-step-pass px-3 py-2 d-flex align-items-center justify-content-center gap-2">
-              <LiaTrophySolid size={17} />
+            <Badge pill className="fs-5 cs-fc-main cs-bg-step-pass px-3 py-2 d-flex align-items-center justify-content-center gap-2">
+              <LiaTrophySolid size={20} className="mt-1" />
               {rightAnswers}/10 Points
             </Badge>
           </Container>

@@ -2,7 +2,7 @@ import '../components/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CountryQuizPage from "@/components/CountryQuizPage";
 
-export const metaData = {
+export const metadata = {
   title: "Country Quiz",
   openGraph: {
     title: "Country Quiz",
